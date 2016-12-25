@@ -1,0 +1,20 @@
+Package: wls
+Type: Package
+Title: Weighted Least Squares (GLS)
+Version: 0.1.0
+Date: 2016-12-24
+Authors@R: c(person("Andrey", "Ziyatdinov", email = "andrey@example.com", role = c("aut", "cre")))
+Maintainer: Andrey Ziyatdinov <andrey@example.com>
+Description: Generalized Least Squares (GLS).
+License: GPL (>= 3)
+URL: https://github.com/variani/wls
+Imports: 
+    Matrix
+Suggests: 
+    testthat,
+    datasets,
+    nlme
+Collate: 
+    'package.R'
+    'decompose.R'
+    'wlm.R'    
