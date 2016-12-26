@@ -5,7 +5,7 @@
 \title{Decomposition of the var-covar matrix.}
 \usage{
 decompose_varcov(varcov, method = c("evd", "chol_evd", "chol"),
-  tol = decompose_tol())
+  tol = decompose_evd_tol(), output = c("transform", "all"))
 }
 \arguments{
 \item{varcov}{Variance-covariance (relative) matrix of residuals.}
@@ -14,7 +14,7 @@ decompose_varcov(varcov, method = c("evd", "chol_evd", "chol"),
 \code{"evd"}, \code{"chol_evd"} or \code{"chol"}.}
 
 \item{tol}{Tolerance for \code{decompose_varcov_evd}.
-The default value is output of \code{decompose_tol} function.}
+The default value is output of \code{decompose_evd_tol} function.}
 }
 \value{
 Transformation matrix (in its trasnposed form) needed to pass from WLS to OLS.

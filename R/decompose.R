@@ -9,7 +9,7 @@
 #'
 #' @return The default value.
 #' @export
-decompose_tol <- function() 1e-10
+decompose_evd_tol <- function() 1e-10
 
 #' Decomposition of the var-covar matrix.
 #'
@@ -17,58 +17,89 @@ decompose_tol <- function() 1e-10
 #' @param method One of the following method for decomposition:
 #'    \code{"evd"}, \code{"chol_evd"} or \code{"chol"}.
 #' @param tol Tolerance for \code{decompose_varcov_evd}.
-#'    The default value is output of \code{decompose_tol} function.
+#'    The default value is output of \code{decompose_evd_tol} function.
 #' @return Transformation matrix (in its trasnposed form) needed to pass from WLS to OLS.
 #' @export
-decompose_varcov <- function(varcov, method = c("evd", "chol_evd", "chol"), tol = decompose_tol())
+decompose_varcov <- function(varcov, 
+  method = c("evd", "chol_evd", "chol"), tol = decompose_evd_tol(),
+  output = c("transform", "all"))
 {
+  ### args
   method <- match.arg(method)
+  output <- match.arg(output)
   
   switch(method,
     "chol_evd" = {
-      A <- try(decompose_varcov_chol(varcov))
+      A <- try(decompose_varcov_chol(varcov, output))
       if(class(A)[1] == "try-error") {
-        A <- decompose_varcov_evd(varcov, tol = tol)
+        A <- decompose_varcov_evd(varcov, tol = tol, output)
       }
       
       return(A)
     },
-    "chol" = decompose_varcov_chol(varcov),
-    "evd" = decompose_varcov_evd(varcov, tol = tol),
+    "chol" = decompose_varcov_chol(varcov, output),
+    "evd" = decompose_varcov_evd(varcov, tol = tol, output),
     stop("switch"))
 }
   
-decompose_varcov_chol <- function(varcov)
+decompose_varcov_chol <- function(varcov, output = c("transform", "all"))
 {
+  ### args
+  output <- match.arg(output)
+  
+  ### compute Chol.
   R <- chol(varcov)
   At <- backsolve(R, diag(nrow(R))) 
 
-  return(At)
+  ### return
+  out <- switch(output,
+    "transform" = At,
+    "all" = list(transform = At, n = ncol(varcov)),
+    stop("unknown value of `output`"))
+  
+  return(out)  
 }
 
-decompose_varcov_evd <- function(varcov, tol = decompose_tol())
+decompose_varcov_evd <- function(varcov, 
+  tol = decompose_evd_tol(), output = c("transform", "all"))
 {
+  ### args
+  output <- match.arg(output)
+  
+  ### compute EVD
   if(class(varcov) == "list") {
     if(all(c("values", "vectors") %in% names(varcov))) {
-      At <- with(varcov, t(vectors) %*% diag(1/sqrt(values)) %*% vectors)
+      vectors <- varcov$vectors
+      values <- varcov$values
+      
+      At <- vectors %*% diag(1/sqrt(values)) %*% t(vectors) # `At` is symmetric
     } else {
       stop("`varcov` is a list, but it is not output from `eigen`")
     }
   } else {
     evd <- eigen(varcov, symmetric = TRUE)
+    vectors <- evd$vectors
+    values <- evd$values
     
     ind <- which(abs(evd$values) < tol)
     if(length(ind) > 0) {
-      evd$values <- evd$values[-ind]
-      evd$vectors <- evd$vectors[, -ind]
+      values <- values[-ind]
+      vectors <- vectors[, -ind]
     }
     
-    At <- t(with(evd, vectors %*% diag(1/sqrt(values)) %*% t(vectors)))
+    At <- vectors %*% diag(1/sqrt(values)) %*% t(vectors) # `At` is symmetric
     
     ind <- (abs(At) < tol)
     At[ind] <- 0
   }
   
-  return(At)
+  ### return
+  out <- switch(output,
+    "transform" = At,
+    "all" = list(transform = At, vectors = vectors, values = values, 
+      n = ncol(varcov), p = ncol(vectors)),
+    stop("unknown value of `output`"))
+  
+  return(out)
 }
   
