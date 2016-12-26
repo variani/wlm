@@ -20,9 +20,8 @@ png("varcovar-matrices.png", width = 3*480, height = 480)
 
 args <- list(sub = NULL, xlab = NULL, ylab = NULL)
 grid.arrange(
-  do.call(image, c(list(V1, main = "OLS"), args)),
-  do.call(image, c(list(V2, main = "WLS"), args)),
-  do.call(image, c(list(V3, main = "GLS"), args)),
+  do.call(image, c(list(V1, main = "Ordinary Least Squares (OLS)\nR package stats"), args)),
+  do.call(image, c(list(V2, main = "Generalized Least Squares (WLS)\nR package stats"), args)),
+  do.call(image, c(list(V3, main = "Weighted Least Squares (GLS)\nR package wls"), args)),
   nrow = 1)
-
 dev.off()

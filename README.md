@@ -9,22 +9,23 @@
 ## Examples
 
 ```
-data(longley)
-nobs <- nrow(longley)
+# data
+data(mtcars)
 
-rho <- 0.64417
-V <- diag(nobs)
-V <- rho^abs(row(V) - col(V))
-```
-
-```
-library(wls)
+mtcars <- within(mtcars, {
+  cyl <- factor(cyl)
+  weight_cyl = 1/sqrt(as.numeric(cyl))
+})
   
-m <- wlm(Employed ~ GNP + Population, data = longley, varcov = V)
-```
+# OLS
+m1 <- lm(mpg ~ disp + cyl, mtcars)
 
-```
-library(nlme)
+# WLS
+m2 <- lm(mpg ~ disp, mtcars, weights = weight_cyl)
 
-m0 <- gls(Employed ~ GNP + Population, correlation = corAR1(form = ~Year), data = longley)
+# GLS
+varcov_cyl <- with(mtcars, sapply(cyl, function(x) as.numeric(x) * as.numeric(x == cyl)))
+
+library(wls)
+m3 <- wlm(mpg ~ disp, mtcars, varcov = varcov_cyl)
 ```
