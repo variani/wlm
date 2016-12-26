@@ -4,7 +4,7 @@
 
 ## About
 
-![](docs/figures/varcovar-matrices.png)
+![](docs/figures/varcovar-matrices-ggplot2.png)
 
 ## Examples
 
