@@ -1,8 +1,12 @@
-# About
+# wls
+
+[![travis-ci build status](https://travis-ci.org/variani/wls.svg?branch=master)](https://travis-ci.org/variani/wls)
+
+## About
 
 ![](docs/figures/varcovar-matrices.png)
 
-# Example
+## Examples
 
 ```
 data(longley)
