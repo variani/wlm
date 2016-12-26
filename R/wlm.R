@@ -2,8 +2,17 @@
 # Main function `wlm`
 #-------------------------
 
+#' GLS/WLS using lm.
+#'
+#' @param formula Formula.
+#' @param data Data.
+#' @param ... Arguments passed to \code{lm}.
+#' @param varcov Variance-covariance (relative) matrix of residuals.
+#' @param tol Tolerance for \code{decompose_varcov_evd}.
+#'    The default value is output of \code{decompose_tol} function.
+#' @return A modified output of \code{lm}.
 #' @export
-wlm <- function(formula, data, ..., varcov, tol = 1e-10)
+wlm <- function(formula, data, ..., varcov, tol = decompose_tol())
 {
   ### call
   mc <- match.call()
@@ -16,7 +25,7 @@ wlm <- function(formula, data, ..., varcov, tol = 1e-10)
   nobs <- nrow(X)
   
   ### process `varcov` argument
-  A <- decompose_varcov(varcov)
+  transform <- decompose_varcov(varcov)
   
   ### create new `formula` and `data`
   names_x <- colnames(X)
@@ -27,10 +36,10 @@ wlm <- function(formula, data, ..., varcov, tol = 1e-10)
   names_y <- as.character(formula)[2]
   tr_formula <- formula(paste(names_y, "~ -1 +", paste(names_x, collapse = " + ")))
   
-  dat_Y <- as.data.frame(A %*% Y)
+  dat_Y <- as.data.frame(as.matrix(crossprod(transform, Y)))
   names(dat_Y) <- names_y
   
-  dat_X <- as.data.frame(A %*% X)
+  dat_X <- as.data.frame(as.matrix(crossprod(transform, X)))
     
   tr_data <- cbind(dat_Y, dat_X)
   
@@ -38,6 +47,9 @@ wlm <- function(formula, data, ..., varcov, tol = 1e-10)
   mod <- lm(tr_formula, tr_data, ...)
 
   oldClass(mod) <- c("wlm", oldClass(mod))
+  
+  mod$varcov <- varcov
+  mod$transform <- transform
   
   return(mod)
   

@@ -6,6 +6,7 @@
 #' @name wlsPackage
 #' @docType package
 #'
+#' @import Matrix
 #' @importFrom stats lm
 {}
 

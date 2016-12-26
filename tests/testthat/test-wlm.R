@@ -10,10 +10,14 @@ test_that("mtcars example", {
     cyl <- factor(cyl)
   })
   
-  cyl <- data$cyl
-  V <- Matrix(diag(cyl))
+  ord <- with(data, order(cyl))
+  data <- data[ord, ]
   
-  mod <- wlm(mpg ~ disp*cyl, data, varcov = V)
+  cyl <- data$cyl
+  V <- Matrix(sapply(cyl, function(x) as.numeric(x) * as.numeric(x == cyl)))
+  
+  #mod <- wlm(mpg ~ disp*cyl, data, varcov = V)
+  mod <- wlm(mpg ~ disp, data, varcov = V)
 })
 
 test_that("longley example", {

@@ -5,10 +5,10 @@ test_that("weight matrix", {
   V <- diag(rep(1:3, each = 2))
   
   # decompose  
-  Si <- decompose_varcov_evd(V)
-  S <- solve(Si) 
+  Sti <- decompose_varcov_evd(V)
+  St <- solve(Sti) 
   
-  expect_equal(tcrossprod(S), V)  
+  expect_equal(crossprod(St), V)  
 })
 
 test_that("AR", {
@@ -18,10 +18,10 @@ test_that("AR", {
   V <- rho^abs(row(V) - col(V))
   
   # decompose  
-  Si <- decompose_varcov_evd(V)
-  S <- solve(Si) 
+  Sti <- decompose_varcov_evd(V)
+  St <- solve(Sti) 
   
-  expect_equal(tcrossprod(S), V)      
+  expect_equal(crossprod(St), V)
 })
 
 test_that("decompose_varcov_chol on nuclear family", {
@@ -34,10 +34,10 @@ test_that("decompose_varcov_chol on nuclear family", {
   V[2, 1] <- 0  
   
   # decompose  
-  Si <- decompose_varcov_chol(V)
-  S <- solve(Si) 
+  Sti <- decompose_varcov_chol(V)
+  St <- solve(Sti) 
   
-  expect_equal(tcrossprod(S), V)
+  expect_equal(crossprod(St), V)
 })
 
 test_that("decompose_varcov_evd on nuclear family", {
@@ -50,10 +50,10 @@ test_that("decompose_varcov_evd on nuclear family", {
   V[2, 1] <- 0  
   
   # decompose  
-  Si <- decompose_varcov_evd(V)
-  S <- solve(Si) 
+  Sti <- decompose_varcov_evd(V)
+  St <- solve(Sti) 
   
-  expect_equal(tcrossprod(S), V)
+  expect_equal(crossprod(St), V)
 })
 
 test_that("(error) decompose_varcov_chol on family effect", {
@@ -62,10 +62,10 @@ test_that("(error) decompose_varcov_chol on family effect", {
   
   # data
   val <- rep(1:3, each = 2)
-  V <- Matrix(sapply(val, function(x) as.numeric(x == val)))
+  V <- Matrix(sapply(val, function(x) x * as.numeric(x == val)))
 
   # decompose  
-  expect_error(decompose_varcov_chol(V), "not positive definite")
+  expect_error(suppressWarnings(decompose_varcov_chol(V)))
 })
 
 test_that("decompose_varcov_evd on family effect", {
@@ -74,12 +74,12 @@ test_that("decompose_varcov_evd on family effect", {
   
   # data
   val <- rep(1:3, each = 2)
-  V <- Matrix(sapply(val, function(x) as.numeric(x == val)))
+  V <- Matrix(sapply(val, function(x) x * as.numeric(x == val)))
 
   # decompose  
-  Si <- decompose_varcov_evd(V)
-  S <- solve(Si) 
+  Sti <- decompose_varcov_evd(V)
+  #St <- solve(Sti) 
   
-  expect_equal(as.numeric(tcrossprod(S)), as.numeric(V))        
+  expect_true(class(Sti) == "matrix")
 })
 
