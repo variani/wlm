@@ -8,8 +8,10 @@
 #' @param data Data.
 #' @param ... Arguments passed to \code{lm}.
 #' @param varcov Variance-covariance (relative) matrix of residuals.
-#' @param tol Tolerance for \code{decompose_varcov_evd}.
+#' @param dtol Tolerance for \code{decompose_varcov}.
 #'    The default value is output of \code{decompose_tol} function.
+#' @param dmethod One of the following methods for decomposition:
+#'    \code{"evd"}, \code{"chol_evd"} or \code{"chol"}.
 #' @return A modified output of \code{lm}.
 #'
 #' @example inst/examples/function-wlm.R

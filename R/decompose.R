@@ -28,7 +28,7 @@ decompose_evd_tol <- function() 1e-10
 #' Decomposition of the var-covar matrix.
 #'
 #' @param varcov Variance-covariance (relative) matrix of residuals.
-#' @param method One of the following method for decomposition:
+#' @param method One of the following methods for decomposition:
 #'    \code{"evd"}, \code{"chol_evd"} or \code{"chol"}.
 #' @param tol Tolerance for \code{decompose_varcov_evd}.
 #'    The default value is output of \code{decompose_evd_tol} function.

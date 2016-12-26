@@ -16,8 +16,11 @@ wlm(formula, data, ..., varcov, dtol = decompose_tol(),
 
 \item{varcov}{Variance-covariance (relative) matrix of residuals.}
 
-\item{tol}{Tolerance for \code{decompose_varcov_evd}.
+\item{dtol}{Tolerance for \code{decompose_varcov}.
 The default value is output of \code{decompose_tol} function.}
+
+\item{dmethod}{One of the following methods for decomposition:
+\code{"evd"}, \code{"chol_evd"} or \code{"chol"}.}
 }
 \value{
 A modified output of \code{lm}.

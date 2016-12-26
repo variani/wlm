@@ -10,7 +10,7 @@ decompose_varcov(varcov, method = c("evd", "chol_evd", "chol"),
 \arguments{
 \item{varcov}{Variance-covariance (relative) matrix of residuals.}
 
-\item{method}{One of the following method for decomposition:
+\item{method}{One of the following methods for decomposition:
 \code{"evd"}, \code{"chol_evd"} or \code{"chol"}.}
 
 \item{tol}{Tolerance for \code{decompose_varcov_evd}.
