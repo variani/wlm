@@ -18,6 +18,8 @@ decompose_evd_tol <- function() 1e-10
 #'    \code{"evd"}, \code{"chol_evd"} or \code{"chol"}.
 #' @param tol Tolerance for \code{decompose_varcov_evd}.
 #'    The default value is output of \code{decompose_evd_tol} function.
+#' @param output Type of output. The transformtion matrix is returned if \code{"transform"}.
+#'    More results of decomposition are returned if \code{"all"}.
 #' @return Transformation matrix (in its trasnposed form) needed to pass from WLS to OLS.
 #' @export
 decompose_varcov <- function(varcov, 

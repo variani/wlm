@@ -7,6 +7,6 @@
 #' @docType package
 #'
 #' @import Matrix
-#' @importFrom stats lm
+#' @importFrom stats lm model.extract model.frame model.matrix
 {}
 

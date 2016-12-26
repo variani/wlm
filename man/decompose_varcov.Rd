@@ -15,6 +15,9 @@ decompose_varcov(varcov, method = c("evd", "chol_evd", "chol"),
 
 \item{tol}{Tolerance for \code{decompose_varcov_evd}.
 The default value is output of \code{decompose_evd_tol} function.}
+
+\item{output}{Type of output. The transformtion matrix is returned if \code{"transform"}.
+More results of decomposition are returned if \code{"all"}.}
 }
 \value{
 Transformation matrix (in its trasnposed form) needed to pass from WLS to OLS.
