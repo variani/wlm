@@ -4,7 +4,8 @@
 \alias{wlm}
 \title{GLS/WLS using lm.}
 \usage{
-wlm(formula, data, ..., varcov, tol = decompose_tol())
+wlm(formula, data, ..., varcov, dtol = decompose_tol(),
+  dmethod = decompose_method())
 }
 \arguments{
 \item{formula}{Formula.}
@@ -23,5 +24,18 @@ A modified output of \code{lm}.
 }
 \description{
 GLS/WLS using lm.
+}
+\examples{
+# @ http://www.biostat.jhsph.edu/~iruczins/teaching/jf/ch5.pdf
+
+# data
+data(longley)
+nobs <- nrow(longley)
+
+rho <- 0.64417
+V <- diag(nobs)
+V <- rho^abs(row(V) - col(V))
+  
+mod <- wlm(Employed ~ GNP + Population, data = longley, varcov = V)
 }
 

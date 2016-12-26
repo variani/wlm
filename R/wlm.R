@@ -11,8 +11,12 @@
 #' @param tol Tolerance for \code{decompose_varcov_evd}.
 #'    The default value is output of \code{decompose_tol} function.
 #' @return A modified output of \code{lm}.
+#'
+#' @example inst/examples/function-wlm.R
+#'
 #' @export
-wlm <- function(formula, data, ..., varcov, tol = decompose_tol())
+wlm <- function(formula, data, ..., varcov, 
+  dtol = decompose_tol(), dmethod = decompose_method())
 {
   ### call
   mc <- match.call()
@@ -25,7 +29,8 @@ wlm <- function(formula, data, ..., varcov, tol = decompose_tol())
   nobs <- nrow(X)
   
   ### process `varcov` argument
-  transform <- decompose_varcov(varcov)
+  decompose <- decompose_varcov(varcov, method = dmethod, tol = dtol,
+    output = "all")
   
   ### create new `formula` and `data`
   names_x <- colnames(X)
@@ -36,10 +41,10 @@ wlm <- function(formula, data, ..., varcov, tol = decompose_tol())
   names_y <- as.character(formula)[2]
   tr_formula <- formula(paste(names_y, "~ -1 +", paste(names_x, collapse = " + ")))
   
-  dat_Y <- as.data.frame(as.matrix(crossprod(transform, Y)))
+  dat_Y <- as.data.frame(as.matrix(crossprod(decompose$transform, Y)))
   names(dat_Y) <- names_y
   
-  dat_X <- as.data.frame(as.matrix(crossprod(transform, X)))
+  dat_X <- as.data.frame(as.matrix(crossprod(decompose$transform, X)))
     
   tr_data <- cbind(dat_Y, dat_X)
   
@@ -49,7 +54,7 @@ wlm <- function(formula, data, ..., varcov, tol = decompose_tol())
   oldClass(mod) <- c("wlm", oldClass(mod))
   
   mod$varcov <- varcov
-  mod$transform <- transform
+  mod$decompose <- decompose
   
   return(mod)
   

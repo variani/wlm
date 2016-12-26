@@ -3,6 +3,20 @@
 # Decompose var-covar matrix 
 #----------------------------
 
+#' The default method for decomposition.
+#'
+#' @return The default decompose method.
+#' @export
+decompose_method <- function() "evd"
+
+#' The default tolerance for decomposition.
+#'
+#' Currently, it is used only for \code{decompose_varcov_evd} function.
+#'
+#' @return The default tolerance value.
+#' @export
+decompose_tol <- function() decompose_evd_tol()
+
 #' The default tolerance for EVD-based decomposition.
 #'
 #' Tolerance for \code{decompose_varcov_evd} function.
@@ -23,7 +37,7 @@ decompose_evd_tol <- function() 1e-10
 #' @return Transformation matrix (in its trasnposed form) needed to pass from WLS to OLS.
 #' @export
 decompose_varcov <- function(varcov, 
-  method = c("evd", "chol_evd", "chol"), tol = decompose_evd_tol(),
+  method = c("evd", "chol_evd", "chol"), tol = decompose_tol(),
   output = c("transform", "all"))
 {
   ### args

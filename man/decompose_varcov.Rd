@@ -5,7 +5,7 @@
 \title{Decomposition of the var-covar matrix.}
 \usage{
 decompose_varcov(varcov, method = c("evd", "chol_evd", "chol"),
-  tol = decompose_evd_tol(), output = c("transform", "all"))
+  tol = decompose_tol(), output = c("transform", "all"))
 }
 \arguments{
 \item{varcov}{Variance-covariance (relative) matrix of residuals.}
