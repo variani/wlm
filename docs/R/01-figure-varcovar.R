@@ -10,11 +10,10 @@ rho <- 0.5
 ### matrices
 V1 <- Matrix(diag(N))
 
-V2 <- Matrix(diag(rep(c(0.1, 1, 10), each = N/3)))
+val <- rep(c(1, 2, 3), each = N/3)
+V2 <- Matrix(diag(val))
 
-V3 <- diag(N)
-V3 <- rho^abs(row(V3) - col(V3))
-V3 <- Matrix(V3)
+V3 <- Matrix(sapply(val, function(x) val * as.numeric(x == val)))
 
 ### plot
 png("varcovar-matrices.png", width = 3*480, height = 480)
