@@ -23,7 +23,7 @@ plot_mat <- function(mat, title = "")
   p <- ggplot(pf, aes(X1, X2)) + geom_tile(aes(fill = value), color = "white") + 
     scale_fill_gradient(low = "white", high = "purple")
   p <- p + scale_y_reverse()
-  p <- p + guides(fill = "none") + theme_void()
+  p <- p + guides(fill = "none") + theme_void() + theme(plot.title = element_text(hjust = 0.5))
   
   p <- p + ggtitle(title)
   
