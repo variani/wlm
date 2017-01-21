@@ -18,7 +18,8 @@
 #'
 #' @export
 wlm <- function(formula, data, ..., varcov, 
-  dtol = decompose_tol(), dmethod = decompose_method())
+  dtol = decompose_tol(), dmethod = decompose_method(),
+  verbose = 0)
 {
   ### call
   mc <- match.call()
@@ -37,7 +38,8 @@ wlm <- function(formula, data, ..., varcov,
   ### create new `formula` and `data`
   names_x <- colnames(X)
 
-  names_x <- gsub("\\(|\\)", "", names_x)
+  names_x <- gsub("\\(|\\)", "", names_x) # rename the intecept: `(Intercept)`
+  names_x <- gsub("\\:", "_", names_x) # rename inteaction terms: `g:e`  
   colnames(X) <- names_x
   
   names_y <- as.character(formula)[2]
@@ -51,6 +53,10 @@ wlm <- function(formula, data, ..., varcov,
   tr_data <- cbind(dat_Y, dat_X)
   
   ### call lm
+  if(verbose) {
+    cat(" * tr_formula:\n")
+    print(tr_formula)
+  }
   mod <- lm(tr_formula, tr_data, ...)
 
   oldClass(mod) <- c("wlm", oldClass(mod))

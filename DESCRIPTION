@@ -8,13 +8,14 @@ Maintainer: Andrey Ziyatdinov <andrey@example.com>
 Description: Generalized Least Squares (GLS).
 License: GPL (>= 3)
 URL: https://github.com/variani/wls
-Imports: 
+Imports:
     Matrix
-Suggests: 
+Suggests:
     testthat,
     datasets,
     nlme
-Collate: 
+Collate:
     'package.R'
     'decompose.R'
-    'wlm.R'    
+    'wlm.R'
+RoxygenNote: 5.0.1
