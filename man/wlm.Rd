@@ -4,7 +4,7 @@
 \alias{wlm}
 \title{GLS/WLS using lm.}
 \usage{
-wlm(formula, data, ..., varcov, dtol = decompose_tol(),
+wlm(formula, data, ..., varcov, transform, dtol = decompose_tol(),
   dmethod = decompose_method(), verbose = 0)
 }
 \arguments{
@@ -41,4 +41,3 @@ V <- rho^abs(row(V) - col(V))
   
 mod <- wlm(Employed ~ GNP + Population, data = longley, varcov = V)
 }
-

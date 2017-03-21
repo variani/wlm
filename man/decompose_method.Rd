@@ -12,4 +12,3 @@ The default decompose method.
 \description{
 The default method for decomposition.
 }
-

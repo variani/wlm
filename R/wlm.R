@@ -17,14 +17,18 @@
 #' @example inst/examples/function-wlm.R
 #'
 #' @export
-wlm <- function(formula, data, ..., varcov, 
+wlm <- function(formula, data, ..., varcov = NULL, transform = NULL,
   dtol = decompose_tol(), dmethod = decompose_method(),
   verbose = 0)
 {
   ### call
   mc <- match.call()
   env <- parent.frame(1)
-   
+  
+  ### args
+  missing_transform <- missing(transform)
+  missing_varcov <- missing(varcov)
+    
   ### extract model/response matrices
   X <- model.matrix(formula, data)
   Y <- model.extract(model.frame(formula, data), "response")
@@ -32,8 +36,12 @@ wlm <- function(formula, data, ..., varcov,
   nobs <- nrow(X)
   
   ### process `varcov` argument
-  decompose <- decompose_varcov(varcov, method = dmethod, tol = dtol,
-    output = "all")
+  if(missing_transform) {
+    decompose <- decompose_varcov(varcov, method = dmethod, tol = dtol,
+      output = "all")
+  } else {
+    decompose <- list(transform = transform)
+  }
   
   ### create new `formula` and `data`
   names_x <- colnames(X)
@@ -61,7 +69,9 @@ wlm <- function(formula, data, ..., varcov,
 
   oldClass(mod) <- c("wlm", oldClass(mod))
   
-  mod$varcov <- varcov
+  if(missing_varcov) {
+    mod$varcov <- varcov
+  }
   mod$decompose <- decompose
   
   return(mod)

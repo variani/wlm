@@ -25,4 +25,3 @@ Transformation matrix (in its trasnposed form) needed to pass from WLS to OLS.
 \description{
 Decomposition of the var-covar matrix.
 }
-

@@ -8,4 +8,3 @@
 \description{
 Weighted Least Squares (WLS)
 }
-

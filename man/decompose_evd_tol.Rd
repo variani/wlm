@@ -12,4 +12,3 @@ The default value.
 \description{
 Tolerance for \code{decompose_varcov_evd} function.
 }
-
