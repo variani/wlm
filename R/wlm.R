@@ -35,6 +35,19 @@ wlm <- function(formula, data, ..., varcov = NULL, transform = NULL,
   
   nobs <- nrow(X)
   
+  ### check
+  if(missing_transform) {
+    if(class(varcov)[1] != "list") {
+      if(nrow(varcov) != nobs || ncol(varcov) != nobs) {
+        stop("varcov dimension")
+      }
+    }  
+  } else {
+    if(nrow(transform) != nobs || ncol(transform) != nobs) {
+      stop("transform dimension")
+    }
+  }
+  
   ### process `varcov` argument
   if(missing_transform) {
     decompose <- decompose_varcov(varcov, method = dmethod, tol = dtol,

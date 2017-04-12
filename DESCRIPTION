@@ -18,4 +18,5 @@ Collate:
     'package.R'
     'decompose.R'
     'wlm.R'
+    'lmm1.R'
 RoxygenNote: 6.0.1

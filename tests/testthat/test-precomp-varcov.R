@@ -23,7 +23,7 @@ test_that("complete cases", {
   mod2 <- wlm(mpg ~ disp, data, varcov = decomp, dmethod = "evd")
   
   # check
-  expect_true(crossprod(coef(mod1) - coef(mod2)) < 1e-10)
+  expect_equal(as.numeric(coef(mod1)), as.numeric(coef(mod2)), tolerance = 1e-10)  
 })
 
 test_that("evd for low-rank varcov (expected error)", {
