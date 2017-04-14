@@ -4,8 +4,8 @@
 \alias{wlm}
 \title{GLS/WLS using lm.}
 \usage{
-wlm(formula, data, ..., varcov, transform, dtol = decompose_tol(),
-  dmethod = decompose_method(), verbose = 0)
+wlm(formula, data, ..., varcov = NULL, transform = NULL,
+  dtol = decompose_tol(), dmethod = decompose_method(), verbose = 0)
 }
 \arguments{
 \item{formula}{Formula.}

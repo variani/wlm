@@ -38,7 +38,7 @@ decompose_evd_tol <- function() 1e-10
 #' @export
 decompose_varcov <- function(varcov, 
   method = c("evd", "chol_evd", "chol"), tol = decompose_tol(),
-  output = c("transform", "all"))
+  output = c("transform", "all", "evd"))
 {
   ### args
   method <- match.arg(method)
@@ -77,7 +77,7 @@ decompose_varcov_chol <- function(varcov, output = c("transform", "all"))
 }
 
 decompose_varcov_evd <- function(varcov, 
-  tol = decompose_evd_tol(), output = c("transform", "all"))
+  tol = decompose_evd_tol(), output = c("transform", "all", "evd"))
 {
   ### args
   output <- match.arg(output)
@@ -88,7 +88,6 @@ decompose_varcov_evd <- function(varcov,
       vectors <- varcov$vectors
       values <- varcov$values
       
-      At <- vectors %*% diag(1/sqrt(values)) %*% t(vectors) # `At` is symmetric
     } else {
       stop("`varcov` is a list, but it is not output from `eigen`")
     }
@@ -97,22 +96,35 @@ decompose_varcov_evd <- function(varcov,
     vectors <- evd$vectors
     values <- evd$values
     
-    ind <- which(abs(evd$values) < tol)
-    if(length(ind) > 0) {
-      values <- values[-ind]
-      vectors <- vectors[, -ind]
+      ind <- which(abs(evd$values) < tol)
+      #if(length(ind) > 0) {
+      #  values <- values[-ind]
+      #  vectors <- vectors[, -ind]
+      #}
+      if(length(ind) > 0) {
+        values[ind] <- 0
+      }
+  }
+  
+  At <- NULL
+  if(output %in% c("transform", "all")) {
+    ind <- which(values == 0)
+    if(length(ind)) {
+      At <- vectors[, -ind] %*% diag(1/sqrt(values[-ind])) %*% t(vectors[, -ind]) # `At` is symmetric
+    } else {
+      At <- vectors %*% diag(1/sqrt(values)) %*% t(vectors) # `At` is symmetric
     }
-    
-    At <- vectors %*% diag(1/sqrt(values)) %*% t(vectors) # `At` is symmetric
     
     ind <- (abs(At) < tol)
     At[ind] <- 0
   }
-  
+            
   ### return
   out <- switch(output,
     "transform" = At,
     "all" = list(transform = At, vectors = vectors, values = values, 
+      n = ncol(varcov), p = ncol(vectors)),
+    "evd" = list(transform = At, vectors = vectors, values = values,
       n = ncol(varcov), p = ncol(vectors)),
     stop("unknown value of `output`"))
   

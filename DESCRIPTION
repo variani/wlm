@@ -16,6 +16,7 @@ Suggests:
     nlme
 Collate:
     'package.R'
+    'utils.R'
     'decompose.R'
     'wlm.R'
     'lmm1.R'
