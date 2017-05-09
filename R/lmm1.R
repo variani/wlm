@@ -5,7 +5,7 @@
 #' LMM with a single random effect and residual random effect.
 #'
 #' @export
-lmm1 <- function(formula, data, rvarcov, REML = TRUE, ..., 
+lmm1 <- function(formula, data, varcov, REML = TRUE, ..., 
   dtol = decompose_tol(), dmethod = "evd",
   verbose = 0)
 {
@@ -14,7 +14,7 @@ lmm1 <- function(formula, data, rvarcov, REML = TRUE, ...,
   env <- parent.frame(1)
   
   ### args
-  stopifnot(!missing(rvarcov))
+  stopifnot(!missing(varcov))
   stopifnot(dmethod == "evd")
   
   ### extract model/response matrices
@@ -24,14 +24,14 @@ lmm1 <- function(formula, data, rvarcov, REML = TRUE, ...,
   nobs <- nrow(X)
   
   ### check
-  if(class(rvarcov)[1] != "list") {
-    if(nrow(rvarcov) != nobs || ncol(rvarcov) != nobs) {
-      stop("rvarcov dimension")
+  if(class(varcov)[1] != "list") {
+    if(nrow(varcov) != nobs || ncol(varcov) != nobs) {
+      stop("varcov dimension")
     }
   }  
   
-  ### process `rvarcov` argument
-  decompose <- decompose_varcov(rvarcov, method = dmethod, tol = dtol,
+  ### process `varcov` argument
+  decompose <- decompose_varcov(varcov, method = dmethod, tol = dtol,
     output = "evd")
   stopifnot(length(decompose$values) == nobs)
   

@@ -18,7 +18,7 @@ test_that("mtcars example", {
   # lmm1
   cyl <- with(mtcars, factor(cyl))
   R <- Matrix(sapply(cyl, function(x) as.numeric(x == cyl)))
-  mod2 <- lmm1(mpg ~ disp, mtcars, rvarcov = R)
+  mod2 <- lmm1(mpg ~ disp, mtcars, varcov = R)
     
   p2 <- mod2$lmm$r2
 
