@@ -28,9 +28,9 @@ lmm1 <- function(formula, data, varcov, REML = TRUE, ...,
     if(nrow(varcov) != nobs || ncol(varcov) != nobs) {
       stop("varcov dimension")
     }
-  }  
+  }
   
-  ### process `varcov` argument
+  ### process `varcov` argument & compute `decompose`!
   decompose <- decompose_varcov(varcov, method = dmethod, tol = dtol,
     output = "evd")
   stopifnot(length(decompose$values) == nobs)
