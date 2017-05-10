@@ -50,8 +50,7 @@ wlm <- function(formula, data, ..., varcov = NULL, transform = NULL,
   
   ### process `varcov` argument
   if(missing_transform) {
-    decompose <- decompose_varcov(varcov, method = dmethod, tol = dtol,
-      output = "all")
+    decompose <- decompose_varcov(varcov, method = dmethod, tol = dtol, output = "all")
   } else {
     decompose <- list(transform = transform)
   }
