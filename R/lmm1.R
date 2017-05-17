@@ -16,24 +16,48 @@ lmm1 <- function(formula, data, varcov, REML = TRUE, ...,
   ### args
   stopifnot(!missing(varcov))
   stopifnot(dmethod == "evd")
-  
+
+  ### ids
+  if(is.null(rownames(data))) {
+    ids <- as.character(1:nrow(data))
+  } else {
+    ids <- rownames(data)
+  }
+  stopifnot(!any(duplicated(ids)))
+      
   ### extract model/response matrices
   X <- model.matrix(formula, data)
   y <- model.extract(model.frame(formula, data), "response")
   
-  nobs <- nrow(X)
+  nobs_data <- nrow(data)
+  nobs_model <- nrow(X)
+
+  obs_model <- which(rownames(X) %in% ids)
+  obs_omit <- which(!(rownames(X) %in% ids))
+
+  ids_model <- ids[obs_model]
   
   ### check
   if(class(varcov)[1] != "list") {
-    if(nrow(varcov) != nobs || ncol(varcov) != nobs) {
+    if(nrow(varcov) != nobs_data || ncol(varcov) != nobs_data) {
       stop("varcov dimension")
+    } else {
+      if(!is.null(rownames(varcov))) {
+        ids_varcov <- rownames(varcov)
+        stopifnot(all(ids_varcov %in% ids))
+          
+        ind <- sapply(ids_model, function(x) which(x == ids_varcov))
+        varcov <- varcov[ind, ind]
+      } else {
+        varcov <- varcov[obs_model, obs_model]
+      }
     }
-  }
+  }  
   
   ### process `varcov` argument & compute `decompose`!
   decompose <- decompose_varcov(varcov, method = dmethod, tol = dtol,
     output = "evd")
-  stopifnot(length(decompose$values) == nobs)
+  stopifnot(length(decompose$values) == nobs_model)
   
   ### rotated y, X
   X_rotated <- crossprod(decompose$vectors, X)

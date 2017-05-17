@@ -28,18 +28,42 @@ wlm <- function(formula, data, ..., varcov = NULL, transform = NULL,
   ### args
   missing_transform <- missing(transform)
   missing_varcov <- missing(varcov)
+
+  ### ids
+  if(is.null(rownames(data))) {
+    ids <- as.character(1:nrow(data))
+  } else {
+    ids <- rownames(data)
+  }
+  stopifnot(!any(duplicated(ids)))
     
   ### extract model/response matrices
   X <- model.matrix(formula, data)
   Y <- model.extract(model.frame(formula, data), "response")
   
-  nobs <- nrow(X)
-  
+  nobs_data <- nrow(data)
+  nobs_model <- nrow(X)
+
+  obs_model <- which(rownames(X) %in% ids)
+  obs_omit <- which(!(rownames(X) %in% ids))
+
+  ids_model <- ids[obs_model]
+      
   ### check
   if(missing_transform) {
     if(class(varcov)[1] != "list") {
-      if(nrow(varcov) != nobs || ncol(varcov) != nobs) {
+      if(nrow(varcov) != nobs_data || ncol(varcov) != nobs_data) {
         stop("varcov dimension")
+      } else {
+        if(!is.null(rownames(varcov))) {
+          ids_varcov <- rownames(varcov)
+          stopifnot(all(ids_varcov %in% ids))
+          
+          ind <- sapply(ids_model, function(x) which(x == ids_varcov))
+          varcov <- varcov[ind, ind]
+        } else {
+          varcov <- varcov[obs_model, obs_model]
+        }
       }
     }  
   } else {
