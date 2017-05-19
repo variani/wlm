@@ -7,6 +7,5 @@
 #' @docType package
 #'
 #' @import Matrix
-#' @importFrom stats lm model.extract model.frame model.matrix
+#' @importFrom stats lm model.extract model.frame model.matrix optimize sigma
 {}
-

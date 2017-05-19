@@ -13,7 +13,8 @@ Imports:
 Suggests:
     testthat,
     datasets,
-    nlme
+    nlme,
+    lme4
 Collate:
     'package.R'
     'utils.R'
