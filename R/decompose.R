@@ -83,7 +83,7 @@ decompose_varcov_evd <- function(varcov,
   output <- match.arg(output)
   
   ### compute EVD
-  if(class(varcov) == "list") {
+  if(class(varcov) %in% c("list", "eigen")) {
     if(all(c("values", "vectors") %in% names(varcov))) {
       vectors <- varcov$vectors
       values <- varcov$values

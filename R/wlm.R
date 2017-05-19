@@ -43,15 +43,16 @@ wlm <- function(formula, data, ..., varcov = NULL, transform = NULL,
   
   nobs_data <- nrow(data)
   nobs_model <- nrow(X)
-
+  nobs_omit <- nobs_data - nobs_model
+  
   obs_model <- which(rownames(X) %in% ids)
   obs_omit <- which(!(rownames(X) %in% ids))
-
+  
   ids_model <- ids[obs_model]
       
   ### check
   if(missing_transform) {
-    if(class(varcov)[1] != "list") {
+    if(!(class(varcov) %in% c("list", "eigen"))) {
       if(nrow(varcov) != nobs_data || ncol(varcov) != nobs_data) {
         stop("varcov dimension")
       } else {
@@ -67,7 +68,9 @@ wlm <- function(formula, data, ..., varcov = NULL, transform = NULL,
       }
     }  
   } else {
-    if(nrow(transform) != nobs || ncol(transform) != nobs) {
+    stopifnot(nobs_omit == 0)
+    
+    if(nrow(transform) != nobs_model || ncol(transform) != nobs_model) {
       stop("transform dimension")
     }
   }

@@ -38,7 +38,7 @@ lmm1 <- function(formula, data, varcov, REML = TRUE, ...,
   ids_model <- ids[obs_model]
   
   ### check
-  if(class(varcov)[1] != "list") {
+  if(!(class(varcov)[1] %in% c("list", "eigen"))) {
     if(nrow(varcov) != nobs_data || ncol(varcov) != nobs_data) {
       stop("varcov dimension")
     } else {
