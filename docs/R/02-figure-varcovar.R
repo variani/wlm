@@ -36,7 +36,7 @@ plot_mat <- function(mat, title = "", color = "orange")
   return(p)
 }
 
-png("varcovar-matrices-ggplot2.png", width = 3*480, height = 480)
+png("varcovar-matrices-ggplot2.png", width = 3*480 - 50, height = 480)
 
 grid.arrange(
   plot_mat(V1, title = "\nOrdinary Least Squares (OLS)", color = color),
