@@ -1,10 +1,12 @@
-# R package wls
+# R package wlm
 
 [![travis-ci build status](https://travis-ci.org/variani/wlm.svg?branch=master)](https://travis-ci.org/variani/wlm)
 
 ![](docs/figures/varcovar-matrices-ggplot2.png)
 
 ```
+library(wlm)
+
 # data
 data(mtcars)
 
@@ -22,6 +24,5 @@ m2 <- lm(mpg ~ disp, mtcars, weights = weight_cyl)
 # GLS
 varcov_cyl <- with(mtcars, sapply(cyl, function(x) as.numeric(x) * as.numeric(x == cyl)))
 
-library(wls)
 m3 <- wlm(mpg ~ disp, mtcars, varcov = varcov_cyl)
 ```
