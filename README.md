@@ -1,6 +1,6 @@
 # R package wls
 
-[![travis-ci build status](https://travis-ci.org/variani/wls.svg?branch=master)](https://travis-ci.org/variani/wls)
+[![travis-ci build status](https://travis-ci.org/variani/wlm.svg?branch=master)](https://travis-ci.org/variani/wlm)
 
 ![](docs/figures/varcovar-matrices-ggplot2.png)
 
