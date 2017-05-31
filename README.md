@@ -5,8 +5,21 @@
 ![](docs/figures/varcovar-matrices-ggplot2.png)
 
 
+The `wlm` R package supports linear models, which are more complex than OLS, 
+but the output is still that as returned by `lm`.
+
+
 See [Fitting linear mixed models for QTL mapping](https://kbroman.wordpress.com/2015/11/24/fitting-linear-mixed-models-for-qtl-mapping/) blog post by Karl Broman 
 for examplanation of the eigen-decomposition trick possible for LMM1 model (1 random genetic + 1 random noise effects).
+
+# Installation
+
+```
+library(devtools)
+install_github("variani/wlm")
+```
+
+# Example code
 
 ```
 library(wlm)
