@@ -40,6 +40,7 @@ m4 <- lmm1(mpg ~ disp, mtcars, varcov = varcov_cyl)
 # ~10% of variance explained by the random effect with `varcov = varcov_cyl`
 
 # LMM1 + precomputed eigendecomposition 
+# - useful when you need to test many predictors such as in GWAS
 evd_varcov_cyl <- eigen(varcov_cyl)
 
 m5 <- lmm1(mpg ~ disp, mtcars, varcov = evd_varcov_cyl)
