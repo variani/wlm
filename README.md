@@ -25,4 +25,23 @@ m2 <- lm(mpg ~ disp, mtcars, weights = weight_cyl)
 varcov_cyl <- with(mtcars, sapply(cyl, function(x) as.numeric(x) * as.numeric(x == cyl)))
 
 m3 <- wlm(mpg ~ disp, mtcars, varcov = varcov_cyl)
+
+# LMM1
+varcov_cyl <- with(mtcars, sapply(cyl, function(x) as.numeric(x == cyl)))
+
+m4 <- lmm1(mpg ~ disp, mtcars, varcov = varcov_cyl)
+
+#> m4$lmm$r2
+#[1] 0.1049433
+# ~10% of variance explained by the random effect with `varcov = varcov_cyl`
+
+# Computation time
+system.time(lmm1(mpg ~ disp, mtcars, varcov = varcov_cyl))
+#   user  system elapsed
+#  0.005   0.000   0.005
+
+library(lme4qtl)
+system.time(lmer(mpg ~ disp + (1|cyl), mtcars))
+#   user  system elapsed
+#  0.014   0.000   0.014
 ```

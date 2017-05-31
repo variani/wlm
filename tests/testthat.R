@@ -1,4 +1,4 @@
 library(testthat)
-library(wls)
+library(wlm)
 
-test_check("wls")
+test_check("wlm")
