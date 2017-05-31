@@ -39,7 +39,12 @@ m4 <- lmm1(mpg ~ disp, mtcars, varcov = varcov_cyl)
 #[1] 0.1049433
 # ~10% of variance explained by the random effect with `varcov = varcov_cyl`
 
-# Computation time
+# LMM1 + precomputed eigendecomposition 
+evd_varcov_cyl <- eigen(varcov_cyl)
+
+m5 <- lmm1(mpg ~ disp, mtcars, varcov = evd_varcov_cyl)
+
+# Computation time of LMMs
 system.time(lmm1(mpg ~ disp, mtcars, varcov = varcov_cyl))
 #   user  system elapsed
 #  0.005   0.000   0.005
