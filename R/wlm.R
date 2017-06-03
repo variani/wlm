@@ -45,33 +45,45 @@ wlm <- function(formula, data, ..., varcov = NULL, transform = NULL,
   nobs_model <- nrow(X)
   nobs_omit <- nobs_data - nobs_model
   
-  obs_model <- which(rownames(X) %in% ids)
-  obs_omit <- which(!(rownames(X) %in% ids))
+  obs_model <- which(ids %in% rownames(X))
+  obs_omit <- which(!(ids %in% rownames(X)))
   
   ids_model <- ids[obs_model]
       
   ### check
   if(missing_transform) {
     if(!(class(varcov) %in% c("list", "eigen"))) {
-      if(nrow(varcov) != nobs_data || ncol(varcov) != nobs_data) {
-        stop("varcov dimension")
-      } else {
-        if(!is.null(rownames(varcov))) {
-          ids_varcov <- rownames(varcov)
-          stopifnot(all(ids_varcov %in% ids))
+      if(nrow(varcov) < nobs_model) {
+        stop("varcov dimension: nrow(varcov) < nobs_model")   
+      }
+      if(!is.null(rownames(varcov))) {
+        ids_varcov <- rownames(varcov)
+        stopifnot(all(ids_varcov %in% ids))
           
-          ind <- sapply(ids_model, function(x) which(x == ids_varcov))
-          varcov <- varcov[ind, ind]
-        } else {
+        ind <- sapply(ids_model, function(x) which(x == ids_varcov))
+        varcov <- varcov[ind, ind]
+      } else {
+        if(nrow(varcov) == nobs_data) {
           varcov <- varcov[obs_model, obs_model]
+        } else {
+          stop("varcov dimension: no rownames & nrow(varcov) != nobs_data")
         }
       }
     }  
   } else {
-    stopifnot(nobs_omit == 0)
-    
-    if(nrow(transform) != nobs_model || ncol(transform) != nobs_model) {
-      stop("transform dimension")
+    if(nrow(transform) != nobs_model) {
+      stop("transform dimension: transform) != nobs_model")
+    } else {
+      if(nobs_omit) {
+        stopifnot(!is.null(rownames(transform)))
+      
+        ids_transform <- rownames(transform)
+        stopifnot(all(ids_transform %in% ids_model))
+
+        ind <- sapply(ids_model, function(x) which(x == ids_transform))
+      
+        transform <- transform[ind, ind]
+      }
     }
   }
   
@@ -91,7 +103,7 @@ wlm <- function(formula, data, ..., varcov = NULL, transform = NULL,
   
   names_y <- as.character(formula)[2]
   tr_formula <- formula(paste(names_y, "~ -1 +", paste(names_x, collapse = " + ")))
-  
+
   dat_Y <- as.data.frame(as.matrix(crossprod(decompose$transform, Y)))
   names(dat_Y) <- names_y
   

@@ -44,7 +44,7 @@ decompose_varcov <- function(varcov,
   method <- match.arg(method)
   output <- match.arg(output)
   
-  switch(method,
+  out <- switch(method,
     "chol_evd" = {
       A <- try(decompose_varcov_chol(varcov, output))
       if(class(A)[1] == "try-error") {
@@ -56,6 +56,14 @@ decompose_varcov <- function(varcov,
     "chol" = decompose_varcov_chol(varcov, output),
     "evd" = decompose_varcov_evd(varcov, tol = tol, output),
     stop("switch"))
+  
+  if(!is.null(rownames(varcov))) {
+    if(!is.null(out$transform)) {
+      rownames(out$transform) <- rownames(varcov)
+    }
+  }
+  
+  return(out)
 }
   
 decompose_varcov_chol <- function(varcov, output = c("transform", "all"))
