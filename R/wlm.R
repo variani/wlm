@@ -17,7 +17,7 @@
 #' @example inst/examples/function-wlm.R
 #'
 #' @export
-wlm <- function(formula, data, ..., varcov = NULL, transform = NULL,
+wlm <- function(formula, data, ..., ids = NULL, varcov = NULL, transform = NULL,
   dtol = decompose_tol(), dmethod = decompose_method(),
   verbose = 0)
 {
@@ -28,12 +28,20 @@ wlm <- function(formula, data, ..., varcov = NULL, transform = NULL,
   ### args
   missing_transform <- missing(transform)
   missing_varcov <- missing(varcov)
-
+  
+  ### convert `data` to data.fame
+  # - data_frame has no row names
+  data <- as.data.frame(data)
+  
   ### ids
-  if(is.null(rownames(data))) {
-    ids <- as.character(1:nrow(data))
+  if(!is.null(ids)) {
+    rownames(data) <- ids
   } else {
-    ids <- rownames(data)
+    if(is.null(rownames(data))) {
+      ids <- as.character(1:nrow(data))
+    } else {
+      ids <- rownames(data)
+    }
   }
   stopifnot(!any(duplicated(ids)))
     
@@ -72,6 +80,8 @@ wlm <- function(formula, data, ..., varcov = NULL, transform = NULL,
     }  
   } else {
     if(nrow(transform) != nobs_model) {
+      print(nrow(transform))
+      print(nobs_model)
       stop("transform dimension: transform) != nobs_model")
     } else {
       if(nobs_omit) {
