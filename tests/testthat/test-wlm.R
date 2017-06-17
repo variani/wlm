@@ -1,6 +1,23 @@
 context("wlm")
 
-test_that("mtcars example", {
+test_that("mtcars example (wls)", {
+  # data
+  data(mtcars)
+  mtcars <- within(mtcars, {
+    cyl <- factor(cyl)
+    weight_cyl = 1/sqrt(as.numeric(cyl))
+  })
+  
+  varcov <- diag(1/mtcars$weight_cyl)
+  
+  m1 <- lm(mpg ~ disp, mtcars, weights = weight_cyl)  
+  m2 <- wlm(mpg ~ disp, mtcars, varcov = varcov)  
+
+  expect_equal(unname(coef(m1)), unname(coef(m2)), tolerance = 1e-10)
+})
+
+
+test_that("mtcars example (gls)", {
   # inc
   stopifnot(require(Matrix))
   

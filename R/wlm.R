@@ -80,8 +80,6 @@ wlm <- function(formula, data, ..., ids = NULL, varcov = NULL, transform = NULL,
     }  
   } else {
     if(nrow(transform) != nobs_model) {
-      print(nrow(transform))
-      print(nobs_model)
       stop("transform dimension: transform) != nobs_model")
     } else {
       if(nobs_omit) {
