@@ -76,7 +76,7 @@ lmm1_compute_lowrank_ll <- function(gamma, y, X, Z, REML = TRUE)
   
   nk <- ifelse(REML, n - k, n)
   
-  comp <- c(gamma, 1)
+  comp <- c(gamma, 1 - gamma)
   
   Sigma_det_log <- log_det_decomp(comp, Z) 
   
@@ -107,7 +107,7 @@ lmm1_compute_naive_ll <- function(gamma, y, X, G, REML = TRUE)
   
   nk <- ifelse(REML, n - k, n)
   
-  Sigma <- gamma*G + diag(n)
+  Sigma <- gamma*G + (1 - gamma)*diag(n)
   Sigma_inv <- solve(Sigma)
   Sigma_det_log <- as.numeric(determinant(Sigma, log = TRUE)$modulus)
   

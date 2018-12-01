@@ -25,11 +25,11 @@ test_that("mtcars example: lmm1lr vs. lmm1", {
   p2 <- m2$lmm$r2
 
   # lmm1lr
-  #m3 <- lmm1lr(mpg ~ disp, mtcars, zmat = Z)
+  m3 <- lmm1lr(mpg ~ disp, mtcars, zmat = Z)
     
-  #p3 <- m3$lmm$r2
+  p3 <- m3$lmm$r2
   
   expect_equal(p1, p2, tolerance = 1e-4) 
-  #expect_equal(p2, p3, tolerance = 1e-4) 
+  expect_equal(p2, p3, tolerance = 1e-4) 
 })
 
