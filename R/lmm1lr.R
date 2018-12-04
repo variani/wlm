@@ -5,7 +5,9 @@
 #' LMM with a single random effect and residual random effect.
 #'
 #' @export
-lmm1lr <- function(formula, data, zmat, REML = TRUE, ..., 
+lmm1lr <- function(formula, data, zmat, REML = TRUE, 
+  store_mat = FALSE,
+  ..., 
   verbose = 0)
 {
   ### call
@@ -58,12 +60,78 @@ lmm1lr <- function(formula, data, zmat, REML = TRUE, ...,
   r2 <- out$maximum
   ll <- out$objective
   
+  ### estimates
+  est <- lmm1lr_effects_naive(gamma = r2, y = y, X = X, Z = zmat, REML = REML)
+  
+  coef <- data.frame(estimate = est$b, se = sqrt(diag(est$bcov)))
+  
   ### return
-  mod <- list()
+  mod <- list(nobs_data = nobs_data, nobs_model = nobs_model,
+    obs_model = obs_model, obs_omit = obs_omit,
+    gamma = r2, s2 = est$s2,
+    est = est, coef = coef,
+    REML = REML, store_mat = store_mat)
+  
+  if(store_mat) {
+    mod <- c(mod, list(y = y, X = X, Z = zmat))
+  }
+  
   mod$lmm <- list(r2 = r2, ll = ll, REML = REML)
   
   return(mod)
 }
+
+#-------------------------
+# LogLik computation 
+#-------------------------
+
+lmm1lr_effects_naive <- function(model, gamma, y, X, Z, s2, REML = TRUE)
+{
+  ### args 
+  missing_model <- missing(model)
+  missing_s2 <- missing(s2)
+  
+  if(missing_model) {
+    n <- length(y)
+    k <- ncol(X)
+    nk <- ifelse(REML, n - k, n)
+    
+    if(missing_s2) {
+      # copmute effect sizes (`b`) with scaled V = gamma ZZ' + (1-gamma) I
+      comp <- c(gamma, 1 - gamma)
+  
+      XV <- crossprod_inverse_woodburry(comp, Z, X) # crossprod(X, Sigma_inv)
+      XVX <- XV %*% X
+  
+      b <- as.numeric(solve(XVX) %*% (XV %*% y))
+  
+      # comptes SE taking into account `s2`: V = s2 (gamma ZZ' + (1-gamma) I)
+      r <- as.numeric(y - X %*% b)
+      yPy <- crossprod_inverse_woodburry(comp, Z, r) %*% r # crossprod(r, Sigma_inv) %*% r
+      s2 <- as.numeric(yPy / nk)
+  
+      comp <- s2 * c(gamma, 1 - gamma)
+  
+      XV <- crossprod_inverse_woodburry(comp, Z, X) # crossprod(X, Sigma_inv)
+      XVX <- XV %*% X
+      bcov <- solve(XVX)
+    } else {
+      comp <- s2 * c(gamma, 1 - gamma)
+      XV <- crossprod_inverse_woodburry(comp, Z, X) # crossprod(X, Sigma_inv)
+      XVX <- XV %*% X
+      XVX_inv <- solve(XVX)
+      
+      b <- as.numeric(XVX_inv %*% (XV %*% y))
+      bcov <- XVX_inv
+    }
+  } else {
+    stop("not implemented")
+  }
+  
+  ### return
+  out <- list(s2 = s2, b = b, bcov = bcov)
+}
+
 
 #-------------------------
 # LogLik computation 
