@@ -61,9 +61,10 @@ lmm1lr <- function(formula, data, zmat, REML = TRUE,
   ll <- out$objective
   
   ### estimates
-  est <- lmm1lr_effects_naive(gamma = r2, y = y, X = X, Z = zmat, REML = REML)
+  est <- lmm1lr_effects(gamma = r2, y = y, X = X, Z = zmat, REML = REML)
   
-  coef <- data.frame(estimate = est$b, se = sqrt(diag(est$bcov)))
+  coef <- data.frame(estimate = est$b, se = sqrt(diag(est$bcov))) %>%
+    mutate(z = estimate / se)
   
   ### return
   mod <- list(nobs_data = nobs_data, nobs_model = nobs_model,
@@ -81,11 +82,11 @@ lmm1lr <- function(formula, data, zmat, REML = TRUE,
   return(mod)
 }
 
-#-------------------------
-# LogLik computation 
-#-------------------------
+#-------------------------------
+# Fixed effects: etimates & cov
+#-------------------------------
 
-lmm1lr_effects_naive <- function(model, gamma, y, X, Z, s2, REML = TRUE)
+lmm1lr_effects <- function(model, gamma, y, X, Z, s2, REML = TRUE)
 {
   ### args 
   missing_model <- missing(model)
@@ -132,6 +133,49 @@ lmm1lr_effects_naive <- function(model, gamma, y, X, Z, s2, REML = TRUE)
   out <- list(s2 = s2, b = b, bcov = bcov)
 }
 
+#-------------------------------
+# Fixed effects: etimates & cov
+#-------------------------------
+
+lmm1lr_predictors <- function(model, pred, verbose = 0)
+{
+  ### args 
+  stopifnot(model$store_mat)
+  
+  y <- model$y
+  X <- model$X
+  Z <- model$Z
+  
+  comp <- model$s2 * c(model$gamma, 1 - model$gamma)
+  
+  M <- ncol(pred)
+  out <- lapply(seq(1, ncol(pred)), function(i) {
+    if(verbose) {
+      cat(" -", i, "/", M, "predictor\n")
+    }
+    if(length(model$obs_omit) == 0) {
+      Xi <- cbind(X, pred[, i])
+      
+      XV <- crossprod_inverse_woodburry(comp, Z, Xi) # crossprod(X, Sigma_inv)
+      XVX <- XV %*% Xi
+      XVX_inv <- solve(XVX)
+      
+      b <- as.numeric(XVX_inv %*% (XV %*% y))
+      bcov <- XVX_inv
+    } else {
+      stop("not implemented")
+    }
+    
+    k <- ncol(Xi)
+    out <- list(b = b[k], se = sqrt(bcov[k, k]))
+  })
+  
+  tab <- bind_rows(out) %>%
+    mutate(z = b/se, p = pchisq(z*z, df = 1, lower = FALSE))
+    
+  ### return
+  return(tab)
+}
 
 #-------------------------
 # LogLik computation 
@@ -244,7 +288,35 @@ log_det_decomp <- function(comp, Z)
   as.numeric(log_det_L$modulus) + n*log(comp[2]) + k*log(comp[1])
 }
 
-
+### efficient calc. of X'V
+trace_inverse_woodburry <- function(comp, Z, batch = 500, verbose = 0)
+{ 
+  n <- nrow(Z)
+  k <- ncol(Z)
+  
+  beg <- seq(1, n, by = batch) 
+  end <- c(beg[-1] - 1, n)  
+  nb <- length(beg)
+  
+  d <- lapply(seq(1, nb), function(b) {
+    if(verbose) {
+      cat(" -", b, "/", nb, "\n")
+    }
+    
+    rows <- seq(beg[b], end[b])
+    E <- sapply(rows, function(r) {
+      e <- rep(0, n)
+      e[r] <- 1
+      e
+    })
+        
+    R <- crossprod_inverse_woodburry(comp, Z, E)
+    
+    R[, rows, drop = FALSE] %>% diag
+  })
+  d <- unlist(d)
+  sum(d)
+}
 
 
 
