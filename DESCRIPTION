@@ -22,4 +22,5 @@ Collate:
     'relmat.R'
     'wlm.R'
     'lmm1.R'
+    'lmm1lr.R'
 RoxygenNote: 6.0.1
