@@ -63,8 +63,8 @@ lmm1lr <- function(formula, data, zmat, REML = TRUE,
   ### estimates
   est <- lmm1lr_effects(gamma = r2, y = y, X = X, Z = zmat, REML = REML)
   
-  coef <- data.frame(estimate = est$b, se = sqrt(diag(est$bcov))) %>%
-    mutate(z = estimate / se)
+  coef <- data.frame(estimate = est$b, se = sqrt(diag(est$bcov)))
+  coef <- within(coef, z <- estimate / se)
   
   ### return
   mod <- list(nobs_data = nobs_data, nobs_model = nobs_model,
@@ -170,8 +170,11 @@ lmm1lr_predictors <- function(model, pred, verbose = 0)
     out <- list(b = b[k], se = sqrt(bcov[k, k]))
   })
   
-  tab <- bind_rows(out) %>%
-    mutate(z = b/se, p = pchisq(z*z, df = 1, lower = FALSE))
+  tab <- bind_rows(out)
+  tab <- within(tab, {
+    z <- b/se
+    p <- pchisq(z*z, df = 1, lower = FALSE)
+  })
     
   ### return
   return(tab)
