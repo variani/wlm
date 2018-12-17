@@ -60,16 +60,21 @@ lmm1lr <- function(formula, data, zmat, REML = TRUE,
   r2 <- out$maximum
   ll <- out$objective
   
-  ### estimates
+  ### fixed effects estimates
   est <- lmm1lr_effects(gamma = r2, y = y, X = X, Z = zmat, REML = REML)
   
-  coef <- data.frame(estimate = est$b, se = sqrt(diag(est$bcov)))
-  coef <- within(coef, z <- estimate / se)
+  coef <- data.frame(b = est$b, se = sqrt(diag(est$bcov)))
+  coef <- within(coef, z <- b / se)
+  
+  ### ranef. effect estimates
+  gamma <- r2
+  s2 <- est$s2
+  comp <- s2 * c(gamma, 1 - gamma)
   
   ### return
   mod <- list(nobs_data = nobs_data, nobs_model = nobs_model,
     obs_model = obs_model, obs_omit = obs_omit,
-    gamma = r2, s2 = est$s2,
+    gamma = gamma, s2 = s2, comp = comp,
     est = est, coef = coef,
     REML = REML, store_mat = store_mat)
   
