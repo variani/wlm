@@ -26,6 +26,9 @@ lmm1lr <- function(formula, data, zmat, REML = TRUE,
   stopifnot(!any(duplicated(ids)))
       
   ### extract model/response matrices
+  if(verbose) {
+    cat(" - extract model/response matrices\n")
+  }
   X <- model.matrix(formula, data)
   y <- model.extract(model.frame(formula, data), "response")
   
@@ -38,6 +41,9 @@ lmm1lr <- function(formula, data, zmat, REML = TRUE,
   ids_model <- ids[obs_model]
   
   ### check
+  if(verbose) {
+    cat(" - check\n")
+  }
   if(nrow(zmat) != nobs_data) {
     stop("zmat dimension")
   } else {
@@ -53,8 +59,11 @@ lmm1lr <- function(formula, data, zmat, REML = TRUE,
   }
   
   ### optimize
+  if(verbose) {
+    cat(" - optimize\n")
+  }
   out <- optimize(lmm1_compute_lowrank_ll, c(0, 1), 
-    y = y, X = X, Z = zmat, REML = REML, 
+    y = y, X = X, Z = zmat, REML = REML, verbose = verbose,
     maximum = TRUE)
   
   r2 <- out$maximum
@@ -189,8 +198,12 @@ lmm1lr_predictors <- function(model, pred, verbose = 0)
 # LogLik computation 
 #-------------------------
 
-lmm1_compute_lowrank_ll <- function(gamma, y, X, Z, REML = TRUE)
+lmm1_compute_lowrank_ll <- function(gamma, y, X, Z, REML = TRUE, verbose = 0)
 {
+  if(verbose > 1) {
+    cat(" - lmm1_compute_lowrank_ll\n")
+  }
+
   n <- length(y)
   k <- ncol(X)
   
@@ -217,6 +230,10 @@ lmm1_compute_lowrank_ll <- function(gamma, y, X, Z, REML = TRUE)
     ll <- ll - 0.5*as.numeric(log_det_XVX$modulus)
   }
   
+  if(verbose > 1) {
+    cat("  -- ll", ll, "\n")
+  }
+    
   return(ll)
 }
 
