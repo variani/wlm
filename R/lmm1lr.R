@@ -73,11 +73,12 @@ lmm1lr <- function(formula, data, zmat, REML = TRUE,
     cat(" - optimize\n")
   }
   # v1: optimize
-  #out <- optimize(lmm1_compute_lowrank_ll, c(0, 1), 
-  #  y = y, X = X, Z = zmat, REML = REML, verbose = verbose,
-  #  maximum = TRUE)
-  #r2 <- out$maximum
-  #ll <- out$objective
+  out <- optimize(lmm1_compute_lowrank_ll, c(0, 1), 
+    y = y, X = X, Z = zmat, REML = REML, verbose = verbose,
+    maximum = TRUE)
+  r2 <- out$maximum
+  ll <- out$objective
+  convergence <- NA
   
   #stopifnot(require(optimx))
   #out <- optimx::optimx(start_r2, lmm1_compute_lowrank_ll, 
@@ -87,14 +88,14 @@ lmm1lr <- function(formula, data, zmat, REML = TRUE,
   #  y = y, X = X, Z = zmat, REML = REML, verbose = verbose)
   
   # v3: optim + starting values
-  out <- optim(start, lmm1_compute_lowrank_ll,
-    lower = 0, upper = 1, 
-    method = "Brent", 
-    control = list(fnscale = -1, trace = 1), # maximize
-    y = y, X = X, Z = zmat, REML = REML, verbose = verbose)
-  r2 <- out$par
-  ll <- out$value
-  convergence <- out$convergence
+  #out <- optim(start, lmm1_compute_lowrank_ll,
+  #  lower = 0, upper = 1, 
+  #  method = "Brent", 
+  #  control = list(fnscale = -1, trace = 1), # maximize
+  #  y = y, X = X, Z = zmat, REML = REML, verbose = verbose)
+  #r2 <- out$par
+  #ll <- out$value
+  #convergence <- out$convergence
 
   ### fixed effects estimates
   est <- lmm1lr_effects(gamma = r2, y = y, X = X, Z = zmat, REML = REML)
