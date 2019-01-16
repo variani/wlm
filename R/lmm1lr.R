@@ -47,14 +47,25 @@ lmm1lr <- function(formula, data, zmat, REML = TRUE,
   if(nrow(zmat) != nobs_data) {
     stop("zmat dimension")
   } else {
-    if(!is.null(rownames(zmat))) {
-      ids_zmat <- rownames(zmat)
-      stopifnot(all(ids_zmat %in% ids))
-          
-      ind <- sapply(ids_model, function(x) which(x == ids_zmat))
-      zmat <- zmat[ind, ]
-    } else {
-      zmat <- zmat[obs_model, ]
+    ids_zmat <- rownames(zmat)
+    
+    skip <- (nobs_model == length(ids_zmat))
+    if(skip) {
+      skip <- ifelse(all.equal(ids_model, ids_zmat), TRUE, FALSE)
+    }
+    
+    if(!skip) {
+      if(verbose > 1) {
+        cat(" - checking ids/rownames\n")
+      }    
+      if(!is.null(rownames(zmat))) {
+        stopifnot(all(ids_zmat %in% ids))
+            
+        ind <- sapply(ids_model, function(x) which(x == ids_zmat))
+        zmat <- zmat[ind, ]
+      } else {
+        zmat <- zmat[obs_model, ]
+      }
     }
   }
   
