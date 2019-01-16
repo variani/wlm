@@ -6,10 +6,9 @@
 #'
 #' @export
 lmm1lr <- function(formula, data, zmat, REML = TRUE, 
-  store_mat = FALSE,
-  ..., 
+  store_mat = FALSE, start = 0.5,
   verbose = 0)
-{
+{ 
   ### call
   mc <- match.call()
   env <- parent.frame(1)
@@ -73,13 +72,30 @@ lmm1lr <- function(formula, data, zmat, REML = TRUE,
   if(verbose) {
     cat(" - optimize\n")
   }
-  out <- optimize(lmm1_compute_lowrank_ll, c(0, 1), 
-    y = y, X = X, Z = zmat, REML = REML, verbose = verbose,
-    maximum = TRUE)
+  # v1: optimize
+  #out <- optimize(lmm1_compute_lowrank_ll, c(0, 1), 
+  #  y = y, X = X, Z = zmat, REML = REML, verbose = verbose,
+  #  maximum = TRUE)
+  #r2 <- out$maximum
+  #ll <- out$objective
   
-  r2 <- out$maximum
-  ll <- out$objective
+  #stopifnot(require(optimx))
+  #out <- optimx::optimx(start_r2, lmm1_compute_lowrank_ll, 
+  #  lower = 0, upper = 1, method = "Nelder-Mead",
+  #  control = list(maximize = TRUE),
+  #  # par. passed to `lmm1_compute_lowrank_l`
+  #  y = y, X = X, Z = zmat, REML = REML, verbose = verbose)
   
+  # v3: optim + starting values
+  out <- optim(start, lmm1_compute_lowrank_ll,
+    lower = 0, upper = 1, 
+    method = "Brent", 
+    control = list(fnscale = -1, trace = 1), # maximize
+    y = y, X = X, Z = zmat, REML = REML, verbose = verbose)
+  r2 <- out$par
+  ll <- out$value
+  convergence <- out$convergence
+
   ### fixed effects estimates
   est <- lmm1lr_effects(gamma = r2, y = y, X = X, Z = zmat, REML = REML)
   
@@ -102,7 +118,7 @@ lmm1lr <- function(formula, data, zmat, REML = TRUE,
     mod <- c(mod, list(y = y, X = X, Z = zmat))
   }
   
-  mod$lmm <- list(r2 = r2, ll = ll, REML = REML)
+  mod$lmm <- list(r2 = r2, ll = ll, convergence = convergence, REML = REML)
   
   return(mod)
 }
@@ -242,10 +258,10 @@ lmm1_compute_lowrank_ll <- function(gamma, y, X, Z, REML = TRUE, verbose = 0)
   }
   
   if(verbose > 1) {
-    cat("  -- ll", ll, "\n")
+    cat("  -- gamma", gamma, "; ll", ll, "\n")
   }
     
-  return(ll)
+  return(as.numeric(ll))
 }
 
 lmm1_compute_naive_ll <- function(gamma, y, X, G, REML = TRUE)

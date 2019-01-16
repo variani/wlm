@@ -14,7 +14,8 @@ Suggests:
     testthat,
     datasets,
     nlme,
-    lme4
+    lme4,
+    optimx
 Collate:
     'package.R'
     'utils.R'

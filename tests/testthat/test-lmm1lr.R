@@ -60,3 +60,17 @@ test_that("mtcars example: estimates by lmm1lr", {
   expect_true(all.equal(coef1$Estimate, coef3$estimate, tol = 1e-4)) 
   expect_true(all.equal(coef1[["Std. Error"]], coef3$se, tol = 1e-4)) 
 })
+
+test_that("lmm1lr: starting values", {
+  # data
+  data(mtcars)
+  mtcars <- within(mtcars, {
+    cyl <- factor(cyl)
+  })
+  Z <- model.matrix(~ cyl - 1, mtcars)
+
+  # models
+  m1 <- lmm1lr(mpg ~ disp, mtcars, zmat = Z)
+  r2_est <- m1$lmm$r2
+  m2 <- lmm1lr(mpg ~ disp, mtcars, zmat = Z, start = r2_est)
+})
